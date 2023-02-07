@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """ asynchronous coroutine """
 
+import random
+import asyncio
 
 async def wait_random(max_delay: int = 10) -> float:
     """ function to delay for a period of 0-max_delay
