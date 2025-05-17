@@ -22,6 +22,7 @@ def stream_users_in_batches(batch_size):
 
     except mysql.connector.Error as err:
         print(f"Database error: {err}")
+        return None
     finally:
         if cursor:
             cursor.close()
