@@ -24,6 +24,15 @@ def log_queries(func):
         with sqlite3.connect('users.db') as conn:
             cursor = conn.cursor()
             cursor.execute(create_table)
+            cursor.execute("SELECT COUNT(*) FROM users")
+            if cursor.fetchone()[0] == 0:
+                cursor.executemany(
+                    "INSERT INTO users (name, email, age) VALUES (?, ?, ?)",
+                    [
+                        ("Norbert", "norbert@example.com", 29),
+                        ("Gevil", "gevil@example.com", 22)
+                    ]
+                )
             conn.commit()
 
         query_result = func(*args, **kwargs)
@@ -42,3 +51,6 @@ def fetch_all_users(query):
 
 #### fetch users while logging the query
 users = fetch_all_users(query="SELECT * FROM users")
+print("Users in the database")
+for user in users:
+    print(user)
