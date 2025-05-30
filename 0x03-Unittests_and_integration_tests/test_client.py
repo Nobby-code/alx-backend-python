@@ -28,7 +28,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
         # Assertions
         self.assertEqual(result, expected_result)
-        url_org = "https: //api.github.com/orgs/"
+        url_org = "https://api.github.com/orgs/"
         mock_get_json.assert_called_once_with(f"{url_org}{org_name}")
 
 
