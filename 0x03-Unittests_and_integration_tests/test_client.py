@@ -52,7 +52,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
         # Sample payload returned by get_json (repos payload)
         repos_payload = [
-            {"name": "rep1"},
+            {"name": "repo1"},
             {"name": "repo2"},
             {"name": "repo3"},
         ]
