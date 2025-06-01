@@ -33,6 +33,9 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    """Serializer
+    """
+    
     class Meta:
         model = User
         fields = ['id', 'username', 'email']
