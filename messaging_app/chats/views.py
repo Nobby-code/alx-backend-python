@@ -10,8 +10,7 @@ from .models import Message, Conversation
 from .serializers import MessageSerializer, ConversationSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework import viewsets, permissions
-from rest_framework import status
+from rest_framework import viewsets, permissions, filters, status
 # from .serializers import BookSerializer
 
 # Create your views here.
@@ -46,6 +45,11 @@ class MessageViewSet(viewsets.ModelViewSet):
         Automatically set the sender of the message as the request user.
         """
         serializer.save(sender=self.request.user)
+
+    # Filters
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['content']
+    ordering_fields = ['sent_at']
 
 def home(request):
     return HttpResponse("Welcome to the API!")
