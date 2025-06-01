@@ -29,4 +29,5 @@ urlpatterns = [
     # path('api/', include(router.urls)),
     # path('', views.home, name='home'),
     path('api/', include('chats.urls')),
+    path('api-auth/', include('rest_framework.urls')),
 ]
