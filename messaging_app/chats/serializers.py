@@ -25,12 +25,17 @@ class UserSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
     # sender = serializers.StringRelatedField()  # Show username instead of ID
+    content = serializers.CharField(max_length=1000)
     sender = UserSerializer(read_only=True)
 
     class Meta:
         model = Message
         fields = ['id', 'sender', 'conversation', 'content', 'timestamp']
-
+    
+    def validate_content(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Message cannot be empty.")
+        return value
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
