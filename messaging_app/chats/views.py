@@ -22,6 +22,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .permissions import IsParticipantOfConversation
 
+from rest_framework.status import HTTP_403_FORBIDDEN
+from rest_framework.response import Response
+
 # from .auth import CustomTokenObtainPairSerializer
 
 # Create your views here.
@@ -81,8 +84,16 @@ class MessageViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         """
-        Save the sender as the current user
+        Save the sender as the current user after checking they belong to the conversation.
         """
+        conversation = serializer.validated_data.get('conversation')
+
+        # Ensure the user is a participant in the conversation
+        if self.request.user not in conversation.participants.all():
+            raise Response(
+                {'detail': 'You are not allowed to send messages in this conversation!'},
+                status=HTTP_403_FORBIDDEN
+            )
         serializer.save(sender=self.request.user)
 
 
