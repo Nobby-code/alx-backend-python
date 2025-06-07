@@ -1,6 +1,7 @@
-from rest_framework.permissions import BasePermission
+# from rest_framework.permissions import BasePermission
+from rest_framework import permissions
 
-class IsParticipantOfConversation(BasePermission):
+class IsParticipantOfConversation(permissions.BasePermission):
     """
     Custom permission:
     - Only allow authenticated users who are part of the conversation.
