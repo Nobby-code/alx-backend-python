@@ -20,7 +20,7 @@ from django.contrib.auth import get_user_model
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['user_id', 'username', 'email']
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -40,7 +40,7 @@ class MessageSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['user_id', 'username', 'email']
 
 
 class ConversationSerializer(serializers.ModelSerializer):

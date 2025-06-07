@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+# from rest_framework.routers import DefaultRouter
 # from chats.views import BookListCreateAPIView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 from chats import views
 
 # router = DefaultRouter()
@@ -27,7 +31,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path("api/books", views.BookListCreateAPIView.as_view(), name="book_list_create"),
     # path('api/', include(router.urls)),
-    # path('', views.home, name='home'),
+    path('', views.home, name='home'),
     path('api/', include('chats.urls')),
-    path('api-auth/', include('rest_framework.urls')),
+    # path('api-auth/', include('rest_framework.urls')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

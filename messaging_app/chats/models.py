@@ -16,6 +16,11 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     password = models.CharField(max_length=128)
+
+    @property
+    def id(self):
+        '''This makes `user.id` valid for SimpleJWT'''
+        return self.user_id
     
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
