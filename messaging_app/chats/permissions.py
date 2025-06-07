@@ -17,12 +17,29 @@ class IsParticipantOfConversation(permissions.BasePermission):
         # return obj.user == request.user or request.user in obj.participants.all()
         user_id = request.user.user_id
         # If obj is a Message, get its conversation
-        if hasattr(obj, 'conversation'):
-            # conversation = obj.conversation
-            participants = obj.conversation.participants.all()
-        else:
-            # conversation = obj
-            participants = obj.participants.all()
-        return participants.filter(user_id=user_id).exists()
+
+        # SAFE methods (GET, HEAD, OPTIONS) are allowed for participants
+        if request.method in permissions.SAFE_METHODS:
+            if hasattr(obj, 'conversation'):
+                # conversation = obj.conversation
+                participants = obj.conversation.participants.all()
+            else:
+                # conversation = obj
+                participants = obj.participants.all()
+            return participants.filter(user_id=user_id).exists()
         # return user in conversation.participants.all()
         # return request.user in obj.participants.all()
+
+         # For write methods (PUT, PATCH, DELETE)
+
+        # If it's a message, allow only if sender == current user
+        if hasattr(obj, 'sender'):
+            return obj.sender == request.user.user_id
+
+        # If it's a conversation object (e.g., trying to update/delete a conversation)
+        # You may allow only if the current user created it (customize this as needed)
+        if hasattr(obj, 'owner'):
+            return obj.owner == request.user.user_id
+
+        # Default: deny access
+        return False
