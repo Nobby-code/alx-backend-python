@@ -86,10 +86,10 @@ class MessageViewSet(viewsets.ModelViewSet):
         """
         Save the sender as the current user after checking they belong to the conversation.
         """
-        conversation = serializer.validated_data.get('conversation')
+        conversation_id = serializer.validated_data.get('conversation')
 
         # Ensure the user is a participant in the conversation
-        if self.request.user not in conversation.participants.all():
+        if self.request.user not in conversation_id.participants.all():
             raise Response(
                 {'detail': 'You are not allowed to send messages in this conversation!'},
                 status=HTTP_403_FORBIDDEN
