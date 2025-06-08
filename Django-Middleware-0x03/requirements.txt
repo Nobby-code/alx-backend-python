@@ -1,0 +1,9 @@
+# Django-Middleware-0x03/requirements.txt
+2 # Django framework for building the web application
+3 django==4.2.11 # Stable version, supports modern features
+4 # Django REST Framework for API development
+5 djangorestframework==3.14.0 # Compatible with Django 4.2
+6 # JWT library for authentication
+7 djangorestframework-simplejwt==5.2.2 # Provides JWT functionality
+8 # Django filters for query filtering
+9 django-filter==23.2 # Enables advanced filtering in views
