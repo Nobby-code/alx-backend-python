@@ -83,7 +83,7 @@ class OffensiveLanguageMiddleware:
         return ip
 
 
-class RolePermissionMiddleware:
+class RolepermissionMiddleware:
     '''middleware that checks the user’s role i.e admin, before allowing access to specific actions'''
     def __init__(self, get_response):
         self.get_response = get_response
