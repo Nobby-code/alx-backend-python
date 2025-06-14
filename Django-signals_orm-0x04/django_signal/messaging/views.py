@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, prefetch
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -19,6 +19,13 @@ def delete_user(request, user_id):
 
 # Recursive function to get nested replies
 def get_replies_recursive(message):
+    # return [{
+    #     'id': reply.id,
+    #     'sender': reply.sender.username,
+    #     'content': reply.content,
+    #     'timestamp': reply.timestamp,
+    #     'replies': get_replies_recursive(reply)
+    # } for reply in message.replies.all()]
     replies = Message.objects.filter(parent_message=message).select_related('sender', 'receiver')
     return [{
         'id': reply.id,
@@ -29,6 +36,7 @@ def get_replies_recursive(message):
     } for reply in replies]
 
 @api_view(['GET'])
+@cache_page(60)
 def get_threaded_conversation(request, user_id):
     current_user = request.user
 
