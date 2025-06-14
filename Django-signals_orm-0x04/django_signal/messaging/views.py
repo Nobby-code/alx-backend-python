@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.views.decorators.cache import cache_page
 from .models import Message
@@ -18,13 +19,14 @@ def delete_user(request, user_id):
 
 # Recursive function to get nested replies
 def get_replies_recursive(message):
+    replies = Message.objects.filter(parent_message=message).select_related('sender', 'receiver')
     return [{
         'id': reply.id,
         'sender': reply.sender.username,
         'content': reply.content,
         'timestamp': reply.timestamp,
         'replies': get_replies_recursive(reply)
-    } for reply in message.replies.all()]
+    } for reply in replies]
 
 @api_view(['GET'])
 def get_threaded_conversation(request, user_id):
@@ -72,3 +74,41 @@ def unread_messages_view(request):
         for msg in unread_messages
     ]
     return Response(data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def send_message(request):
+    receiver_id = request.data.get('receiver')
+    content = request.data.get('content')
+    parent_id = request.data.get('parent_message')  # optional, for replies
+
+    if not receiver_id or not content:
+        return Response({'error': 'Receiver and content are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        receiver = User.objects.get(pk=receiver_id)
+    except User.DoesNotExist:
+        return Response({'error': 'Receiver not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    parent_message = None
+    if parent_id:
+        try:
+            parent_message = Message.objects.get(pk=parent_id)
+        except Message.DoesNotExist:
+            return Response({'error': 'Parent message not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    message = Message.objects.create(
+        sender=request.user,
+        receiver=receiver,
+        content=content,
+        parent_message=parent_message  # can be None
+    )
+
+    return Response({
+        'id': message.id,
+        'sender': message.sender.username,
+        'receiver': message.receiver.username,
+        'content': message.content,
+        'timestamp': message.timestamp
+    }, status=status.HTTP_201_CREATED)
