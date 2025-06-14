@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, prefetch
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -36,6 +36,7 @@ def get_replies_recursive(message):
     } for reply in replies]
 
 @api_view(['GET'])
+@cache_page(60)
 def get_threaded_conversation(request, user_id):
     current_user = request.user
 
@@ -70,7 +71,8 @@ def get_threaded_conversation(request, user_id):
 @api_view(['GET'])
 def unread_messages_view(request):
     user = request.user
-    unread_messages = Message.unread.for_user(user)
+    # unread_messages = Message.unread.unread_for_user(user)
+    unread_messages = Message.unread.unread_for_user(user).only('id', 'sender', 'content', 'timestamp')
     data = [
         {
             'id': msg.id,

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .managers import UnreadMessagesManager
 
 # Create your models here.
 class UnreadMessagesManager(models.Manager):
@@ -18,6 +19,9 @@ class Message(models.Model):
     edited_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='edited_messages') 
     #New fiel to track if the message wa read
     read = models.BooleanField(default=False)
+    
+    # Custom manager
+    unread = UnreadMessagesManager()
 
     #self-referential field to support replies
     parent_message = models.ForeignKey(
