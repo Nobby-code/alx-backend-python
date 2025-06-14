@@ -15,6 +15,7 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     # New field to check if a message has been edited
     edited = models.BooleanField(default=False)
+    edited_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='edited_messages') 
     #New fiel to track if the message wa read
     read = models.BooleanField(default=False)
 
