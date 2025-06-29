@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo "📦 Scaling the Django deployment to 3 replicas..."
+kubectl scale deployment messaging-app-deployment --replicas=3
+
+echo "⏳ Waiting for pods to be ready..."
+sleep 10
+
+echo "🔍 Listing all pods..."
+kubectl get pods -l app=messaging-app
+
+echo "⚙️ Running load test using wrk (10s, 2 threads, 10 connections)..."
+# Replace <service-ip> and <port> with actual values from 'minikube service' or port-forward
+wrk http://localhost:8000 --duration 10s --threads 2 --connections 10
+
+echo "📊 Monitoring resource usage..."
+kubectl top pods
