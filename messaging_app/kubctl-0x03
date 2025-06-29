@@ -1,0 +1,24 @@
+#!/bin/bash
+
+echo "🚀 Starting rolling update to image version 2.0..."
+
+# Apply updated deployment
+kubectl apply -f blue_deployment.yaml
+
+# Monitor rollout status
+echo "⏳ Watching rollout progress..."
+kubectl rollout status deployment/messaging-app-blue
+
+# Run curl in background while rollout is happening
+echo "📡 Testing app availability during rollout..."
+
+SERVICE_IP=$(minikube ip)
+for i in {1..10}; do
+  curl -s http://$SERVICE_IP:8000/ >> rollout_log.txt
+  echo " 🔁 Request $i sent"
+  sleep 1
+done
+
+# Check the new pods after update
+echo "🔍 Checking updated pods..."
+kubectl get pods -l version=blue
